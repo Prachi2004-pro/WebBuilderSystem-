@@ -88,27 +88,127 @@ export default function WebsitePreview({ websiteData }) {
         </div>
       </section>
 
-      {/* Company Logos */}
-      <section className="p-6 max-w-6xl mx-auto">
-        <div className="flex justify-center items-center space-x-12 opacity-50">
-          <div className="text-2xl font-bold">slack</div>
-          <div className="text-2xl font-bold">zoom</div>
-          <div className="text-2xl font-bold">airbnb</div>
-          <div className="text-2xl font-bold">Spotify</div>
-          <div className="text-2xl font-bold">envato</div>
-        </div>
-      </section>
+      {/* Features Section */}
+      {websiteData.features?.length > 0 && (
+        <section className="p-6 max-w-6xl mx-auto mt-10">
+          <h2 className="text-3xl font-bold text-center mb-10">Features</h2>
 
-      {/* Categories Section */}
-      <section className="p-6 max-w-6xl mx-auto mt-12">
-        <h2 className="text-3xl font-bold text-center mb-4">
-          Explore jobs by category
-        </h2>
-        <p className="text-center text-gray-600 mb-8">
-          Get the most exciting jobs from all around the world and grow your
-          career fast with others.
-        </p>
-      </section>
+          <div className="grid md:grid-cols-3 gap-6">
+            {websiteData.features.map((feature, index) => (
+              <div
+                key={index}
+                className="p-6 border rounded-xl hover:shadow-lg transition"
+              >
+                <h3 className="text-xl font-semibold mb-3">
+                  {feature.title || "Feature title"}
+                </h3>
+                <p className="text-gray-600">
+                  {feature.description || "Feature description"}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* About Us */}
+      {websiteData.aboutUs && (
+        <section className="p-6 max-w-6xl mx-auto mt-10">
+          <h2 className="text-3xl font-bold text-center mb-2">About Us</h2>
+          <div className="bg-gray-100 text-black rounded-xl py-10 text-center">
+            <h2 className="text-3xl font-bold mb-6">
+              {websiteData.aboutUs.aboutTitle || "About Title"}
+            </h2>
+
+            <p className="text-gray-800 max-w-3xl mx-auto">
+              {websiteData.aboutUs.aboutDescription ||
+                "Write something about your company here."}
+            </p>
+          </div>
+        </section>
+      )}
+
+      {/* Contact Us */}
+      {websiteData.contactUs && (
+        <section className="p-6 max-w-6xl mx-auto mt-10">
+          <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
+
+          <div className="grid md:grid-cols-3 gap-6 text-center">
+            <div className="py-6 border rounded-xl">
+              <h4 className="font-semibold mb-2">Email</h4>
+              <p className="text-gray-600 text-center">
+                {websiteData.contactUs.email || "example@email.com"}
+              </p>
+            </div>
+
+            <div className="py-6 border rounded-xl">
+              <h4 className="font-semibold mb-2">Phone</h4>
+              <p className="text-gray-600">
+                {websiteData.contactUs.phoneNo || "+91 00000 00000"}
+              </p>
+            </div>
+
+            <div className="py-6 border rounded-xl">
+              <h4 className="font-semibold mb-2">Address</h4>
+              <p className="text-gray-600">
+                {websiteData.contactUs.address || "Your address here"}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* FAQ Section */}
+      {websiteData.FAQ?.length > 0 && (
+        <section className="p-6 max-w-4xl mx-auto mt-10">
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Frequently Asked Questions
+          </h2>
+
+          <div className="space-y-4">
+            {websiteData.FAQ.map((faq, index) => (
+              <details
+                key={index}
+                className="border rounded-lg p-4 cursor-pointer"
+              >
+                <summary className="font-semibold">
+                  {faq.question || "Your question"}
+                </summary>
+                <p className="mt-2 text-gray-600">
+                  {faq.answer || "Your answer goes here"}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Footer */}
+      <footer className="bg-blue-600 text-white mt-10">
+        <div className="max-w-6xl mx-auto p-8 text-center">
+          <h3 className="text-2xl font-bold mb-4">
+            {websiteData.footer?.brandName || "Your Brand"}
+          </h3>
+
+          {websiteData.footer?.branLogo && (
+            <img
+              src={websiteData.footer.branLogo}
+              alt="Brand Logo"
+              className="mx-auto h-12 mb-4"
+            />
+          )}
+
+          {websiteData.footer?.SocialLinks && (
+            <p className="text-gray-300 mb-4">
+              {websiteData.footer.SocialLinks}
+            </p>
+          )}
+
+          <p className="text-sm text-gray-300">
+            {websiteData.footer?.copywrite || "© 2026 All rights reserved."}
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

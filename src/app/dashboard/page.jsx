@@ -47,14 +47,19 @@ export default function Dashboard() {
         return;
       }
 
-      await axios.delete(`http://localhost:5000/template/delete/${templateId}`, {
-        withCredentials: true,
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.delete(
+        `http://localhost:5000/template/delete/${templateId}`,
+        {
+          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
-      setTemplateList((prev) => prev.filter((template) => template._id !== templateId));
+      setTemplateList((prev) =>
+        prev.filter((template) => template._id !== templateId),
+      );
       alert("Template deleted successfully");
     } catch (error) {
       console.error("Delete error:", error);
@@ -92,9 +97,15 @@ export default function Dashboard() {
               >
                 {/* Image */}
                 <div className="aspect-square h-3/4 bg-gray-800 text-white flex items-center justify-center overflow-hidden">
-                  <div className="text-center">
-                    <img src={template?.heroSection?.heroImage} alt={template?.heroSection?.title} />
-                  </div>
+                  {template?.heroSection?.heroImage ? (
+                    <img
+                      src={template.heroSection.heroImage}
+                      alt={template?.heroSection?.title || "Hero Image"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-sm">No image</span>
+                  )}
                 </div>
 
                 {/* Text */}
@@ -103,18 +114,24 @@ export default function Dashboard() {
                     {template?.heroSection?.title || "Untitled Project"}
                   </h3>
                   <p className="text-gray-300 text-sm mb-4">
-                    {template?.heroSection?.description || "No description available."}
+                    {template?.heroSection?.description ||
+                      "No description available."}
                   </p>
                   <div className="flex flex-row gap-2">
-                    <Button className="w-full m-2"
-                      onClick={() => (window.location.href = `/editor/${template._id}`)}
+                    <Button
+                      className="w-full m-2"
+                      onClick={() =>
+                        (window.location.href = `/editor/${template._id}`)
+                      }
                     >
                       Edit Project
                     </Button>
-                    <Button className="w-full m-2 bg-red-600 hover:bg-red-700"
+                    <Button
+                      className="w-full m-2 bg-red-600 hover:bg-red-700"
                       onClick={() => handleDelete(template._id)}
                     >
-                      <Trash2 size={16} className="inline mr-2" />Delete
+                      <Trash2 size={16} className="inline mr-2" />
+                      Delete
                     </Button>
                   </div>
                 </div>

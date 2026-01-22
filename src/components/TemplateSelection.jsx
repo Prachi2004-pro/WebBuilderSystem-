@@ -18,14 +18,14 @@ export default function TemplateSelection() {
       title: "Business Template",
       description: "A professional template for business websites.",
       type: "business",
-      heroImage: "  https://example.com/hero-business.jpg",
+      heroImage: "https://example.com/hero-business.jpg",
     },
     {
       id: 2,
       title: "Portfolio Template",
       description: "A professional template for portfolios.",
       type: "portfolio",
-      heroImage: "  https://example.com/hero-business.jpg",
+      heroImage: "https://example.com/hero-business.jpg",
     },
   ];
 
