@@ -88,19 +88,22 @@ export default function Dashboard() {
             {templateList.map((template) => (
               <div
                 key={template._id}
-                className="border border-gray-700 rounded-lg overflow-hidden hover:border-blue-500 transition-colors"
+                className="border border-gray-700 rounded-lg overflow-hidden hover:border-blue-500 h-fit"
               >
-                <div className="aspect-video bg-gray-800 text-white flex items-center justify-center">
+                {/* Image */}
+                <div className="aspect-square h-3/4 bg-gray-800 text-white flex items-center justify-center overflow-hidden">
                   <div className="text-center">
-                    <img src={template?.heroImage} alt={template?.templateName} />
+                    <img src={template?.heroSection?.heroImage} alt={template?.heroSection?.title} />
                   </div>
                 </div>
+
+                {/* Text */}
                 <div className="p-4">
-                  <h3 className="text-white font-semibold text- xl mb-2">
-                    {template?.templateName || "Untitled Project"}
+                  <h3 className="text-white font-semibold text-xl mb-2">
+                    {template?.heroSection?.title || "Untitled Project"}
                   </h3>
                   <p className="text-gray-300 text-sm mb-4">
-                    {template?.templateType || "No description available."}
+                    {template?.heroSection?.description || "No description available."}
                   </p>
                   <div className="flex flex-row gap-2">
                     <Button className="w-full m-2"

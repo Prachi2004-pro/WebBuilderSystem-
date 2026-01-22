@@ -10,6 +10,8 @@ export default function TemplateSelection() {
   const router = useRouter();
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [heroImageFile, setHeroImageFile] = useState(null);
+
   const templates = [
     {
       id: 1,
@@ -43,19 +45,26 @@ export default function TemplateSelection() {
       }
       setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/template/create",
-        {
-          templateType: selectedTemplate.type,
-          templateName: selectedTemplate.title,
+      // ✅ FormData
+    const formData = new FormData();
+    formData.append("templateType", selectedTemplate.type);
+    formData.append("templateName", selectedTemplate.title);
+
+    if (heroImageFile) {
+      formData.append("heroImage", heroImageFile);
+    }
+
+    const res = await axios.post(
+      "http://localhost:5000/template/create",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+        withCredentials: true,
+      }
+    );
 
       console.log("Template created:", res.data);
       const templateId = res.data.template._id;
@@ -100,6 +109,7 @@ export default function TemplateSelection() {
                 className="hidden"
                 onChange={() => setSelectedTemplate(template)}
               />
+
               <div className="aspect-video bg-gray-800 flex items-center justify-center">
                 <div className="text-center">
                   <img src={template?.heroImage} alt={template?.title} />

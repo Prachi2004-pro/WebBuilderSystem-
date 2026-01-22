@@ -1,10 +1,11 @@
 import Editor from '@/components/Editor'
-import Editor1 from '@/components/Editor1'
+// import Editor1 from '@/components/Editor1'
 
-export default function EditorPage() {
+export default async function EditorPage({params}) {
+  const { id } = await params;
   return (
     <div>
-      <Editor />
+      <Editor templateId={id} />
       {/* <Editor1 />  */}
     </div>
   )
