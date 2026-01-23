@@ -10,6 +10,15 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const defaultWebsiteData = {
+  sections: {
+    hero: true,
+    features: true,
+    aboutUs: true,
+    contactUs: true,
+    faq: true,
+    footer: true,
+  },
+
   headerSection: {
     logo: "",
     businessName: "",
@@ -43,11 +52,20 @@ const defaultWebsiteData = {
 
   footer: {
     brandName: "",
-    branLogo: "",
+    brandLogo: "",
     SocialLinks: "",
     copywrite: "",
   },
 };
+
+const sectionList = [
+  { key: "hero", label: "Hero Section" },
+  { key: "features", label: "Features" },
+  { key: "aboutUs", label: "About Us" },
+  { key: "contactUs", label: "Contact Us" },
+  { key: "faq", label: "FAQ" },
+  { key: "footer", label: "Footer" },
+];
 
 export default function Editor({ templateId }) {
   console.log("Editor template Id: ", templateId); // DEBUG
@@ -75,6 +93,15 @@ export default function Editor({ templateId }) {
 
         if (template) {
           setWebsiteData({
+            sections: template.sections || {
+              hero: true,
+              features: true,
+              aboutUs: true,
+              contactUs: true,
+              faq: true,
+              footer: true,
+            },
+
             headerSection: {
               logo: template.headerSection?.logo || "",
               businessName: template.headerSection?.businessName || "",
@@ -108,7 +135,7 @@ export default function Editor({ templateId }) {
 
             footer: {
               brandName: template.footer?.brandName || "",
-              branLogo: template.footer?.branLogo || "",
+              brandLogo: template.footer?.brandLogo || "",
               SocialLinks: template.footer?.SocialLinks || "",
               copywrite: template.footer?.copywrite || "",
             },
@@ -179,6 +206,11 @@ export default function Editor({ templateId }) {
 
       const formData = new FormData();
 
+      //sections
+      Object.entries(websiteData.sections).forEach(([key, value]) => {
+        formData.append(`sections[${key}]`, value);
+      });
+
       // Header section
       formData.append(
         "headerSection[businessName]",
@@ -245,7 +277,7 @@ export default function Editor({ templateId }) {
 
       // Footer
       formData.append("footer[brandName]", websiteData.footer.brandName);
-      formData.append("footer[branLogo]", websiteData.footer.branLogo);
+      formData.append("footer[brandLogo]", websiteData.footer.brandLogo);
       formData.append("footer[SocialLinks]", websiteData.footer.SocialLinks);
       formData.append("footer[copywrite]", websiteData.footer.copywrite);
 
@@ -296,6 +328,34 @@ export default function Editor({ templateId }) {
         <div className="w-1/3 bg-[#242424] p-6 overflow-y-auto">
           <h2 className="text-lg font-semibold mb-6">Fill Website Details</h2>
 
+          {/* Section Picker */}
+          <section className="p-4 border rounded-md mb-4">
+            <h3 className="font-bold mb-4 text-2xl">Sections</h3>
+
+            {sectionList.map((section) => (
+              <div
+                key={section.key}
+                className="flex items-center justify-between gap-2 mb-2 "
+              >
+                <span>{section.label}</span>
+
+                <input
+                  type="checkbox"
+                  checked={websiteData.sections?.[section.key]}
+                  onChange={(e) =>
+                    setWebsiteData((prev) => ({
+                      ...prev,
+                      sections: {
+                        ...prev.sections,
+                        [section.key]: e.target.checked,
+                      },
+                    }))
+                  }
+                />
+              </div>
+            ))}
+          </section>
+
           <div className="space-y-4">
             {/* Header section */}
             <div>
@@ -316,375 +376,387 @@ export default function Editor({ templateId }) {
             </div>
 
             {/* Hero Section */}
-            <div className="mt-8 rounded-lg space-y-2">
-              <h3 className="text-lg font-semibold mb-4">Hero Section</h3>
+            {websiteData.sections.hero && (
+              <div className="mt-8 rounded-lg space-y-2">
+                <h3 className="text-lg font-semibold mb-4">Hero Section</h3>
 
-              {/* Hero Title */}
-              <input
-                type="text"
-                placeholder="Hero Title"
-                value={websiteData.heroSection.title}
-                onChange={(e) =>
-                  handleNestedChange("heroSection", "title", e.target.value)
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-
-              {/* Tagline */}
-              <input
-                type="text"
-                placeholder="Tagline"
-                value={websiteData.heroSection.tagline}
-                onChange={(e) =>
-                  handleNestedChange("heroSection", "tagline", e.target.value)
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-
-              {/* Description */}
-              <textarea
-                placeholder="Hero Description"
-                rows={3}
-                value={websiteData.heroSection.description}
-                onChange={(e) =>
-                  handleNestedChange(
-                    "heroSection",
-                    "description",
-                    e.target.value,
-                  )
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-
-              {/* Button Text */}
-              <input
-                type="text"
-                placeholder="Button Text"
-                value={websiteData.heroSection.button}
-                onChange={(e) =>
-                  handleNestedChange("heroSection", "button", e.target.value)
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-
-              {/* Hero Image */}
-              <div>
-                <label className="block text-sm mb-2 text-gray-400">
-                  Hero Image
-                </label>
-
+                {/* Hero Title */}
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
+                  type="text"
+                  placeholder="Hero Title"
+                  value={websiteData.heroSection.title}
+                  onChange={(e) =>
+                    handleNestedChange("heroSection", "title", e.target.value)
+                  }
                   className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
                 />
 
-                <p className="text-xs text-gray-500 mt-2">Or Image URL</p>
-
+                {/* Tagline */}
                 <input
-                  type="url"
-                  placeholder="https://example.com/image.jpg"
-                  value={
-                    websiteData.heroSection.heroImage?.startsWith("blob:")
-                      ? ""
-                      : websiteData.heroSection.heroImage
+                  type="text"
+                  placeholder="Tagline"
+                  value={websiteData.heroSection.tagline}
+                  onChange={(e) =>
+                    handleNestedChange("heroSection", "tagline", e.target.value)
                   }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
+
+                {/* Description */}
+                <textarea
+                  placeholder="Hero Description"
+                  rows={3}
+                  value={websiteData.heroSection.description}
                   onChange={(e) =>
                     handleNestedChange(
                       "heroSection",
-                      "heroImage",
+                      "description",
                       e.target.value,
                     )
                   }
                   className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
                 />
 
-                {websiteData.heroSection.heroImage && (
-                  <img
-                    src={websiteData.heroSection.heroImage}
-                    alt="Hero Preview"
-                    className="w-24 h-24 mt-3 object-cover rounded-lg border"
+                {/* Button Text */}
+                <input
+                  type="text"
+                  placeholder="Button Text"
+                  value={websiteData.heroSection.button}
+                  onChange={(e) =>
+                    handleNestedChange("heroSection", "button", e.target.value)
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
+
+                {/* Hero Image */}
+                <div>
+                  <label className="block text-sm mb-2 text-gray-400">
+                    Hero Image
+                  </label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
                   />
-                )}
+
+                  <p className="text-xs text-gray-500 mt-2">Or Image URL</p>
+
+                  <input
+                    type="url"
+                    placeholder="https://example.com/image.jpg"
+                    value={
+                      websiteData.heroSection.heroImage?.startsWith("blob:")
+                        ? ""
+                        : websiteData.heroSection.heroImage
+                    }
+                    onChange={(e) =>
+                      handleNestedChange(
+                        "heroSection",
+                        "heroImage",
+                        e.target.value,
+                      )
+                    }
+                    className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                  />
+
+                  {websiteData.heroSection.heroImage && (
+                    <img
+                      src={websiteData.heroSection.heroImage}
+                      alt="Hero Preview"
+                      className="w-24 h-24 mt-3 object-cover rounded-lg border"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Features Section */}
-            <div className="mt-8 space-y-2">
-              <h3 className="text-lg font-semibold mb-4">Features</h3>
+            {websiteData.sections.features && (
+              <div className="mt-8 space-y-2">
+                <h3 className="text-lg font-semibold mb-4">Features</h3>
 
-              {websiteData.features.map((feature, index) => (
-                <div key={index} className="mb-4 border p-3 rounded-lg">
-                  <input
-                    type="text"
-                    placeholder="Feature Title"
-                    value={feature.title}
-                    onChange={(e) => {
-                      const updated = [...websiteData.features];
-                      updated[index].title = e.target.value;
-                      setWebsiteData({ ...websiteData, features: updated });
-                    }}
-                    className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-                  />
+                {websiteData.features.map((feature, index) => (
+                  <div key={index} className="mb-4 border p-3 rounded-lg">
+                    <input
+                      type="text"
+                      placeholder="Feature Title"
+                      value={feature.title}
+                      onChange={(e) => {
+                        const updated = [...websiteData.features];
+                        updated[index].title = e.target.value;
+                        setWebsiteData({ ...websiteData, features: updated });
+                      }}
+                      className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    />
 
-                  <textarea
-                    placeholder="Feature Description"
-                    value={feature.description}
-                    onChange={(e) => {
-                      const updated = [...websiteData.features];
-                      updated[index].description = e.target.value;
-                      setWebsiteData({ ...websiteData, features: updated });
-                    }}
-                    className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-                  />
+                    <textarea
+                      placeholder="Feature Description"
+                      value={feature.description}
+                      onChange={(e) => {
+                        const updated = [...websiteData.features];
+                        updated[index].description = e.target.value;
+                        setWebsiteData({ ...websiteData, features: updated });
+                      }}
+                      className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    />
 
-                  <Button
-                    variant="secondary"
-                    className="mt-2"
-                    onClick={() => {
-                      const updated = websiteData.features.filter(
-                        (_, i) => i !== index,
-                      );
-                      setWebsiteData({ ...websiteData, features: updated });
-                    }}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))}
+                    <Button
+                      variant="secondary"
+                      className="mt-2"
+                      onClick={() => {
+                        const updated = websiteData.features.filter(
+                          (_, i) => i !== index,
+                        );
+                        setWebsiteData({ ...websiteData, features: updated });
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
 
-              <Button
-                onClick={() =>
-                  setWebsiteData({
-                    ...websiteData,
-                    features: [
-                      ...websiteData.features,
-                      { title: "", description: "" },
-                    ],
-                  })
-                }
-              >
-                Add Feature
-              </Button>
-            </div>
+                <Button
+                  onClick={() =>
+                    setWebsiteData({
+                      ...websiteData,
+                      features: [
+                        ...websiteData.features,
+                        { title: "", description: "" },
+                      ],
+                    })
+                  }
+                >
+                  Add Feature
+                </Button>
+              </div>
+            )}
 
             {/* About Us */}
-            <div className="mt-8 space-y-2">
-              <h3 className="text-lg font-semibold mb-4">About Us</h3>
+            {websiteData.sections.aboutUs && (
+              <div className="mt-8 space-y-2">
+                <h3 className="text-lg font-semibold mb-4">About Us</h3>
 
-              <input
-                type="text"
-                placeholder="About Title"
-                value={websiteData.aboutUs.aboutTitle}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    aboutUs: {
-                      ...websiteData.aboutUs,
-                      aboutTitle: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
+                <input
+                  type="text"
+                  placeholder="About Title"
+                  value={websiteData.aboutUs.aboutTitle}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      aboutUs: {
+                        ...websiteData.aboutUs,
+                        aboutTitle: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
 
-              <textarea
-                placeholder="About Description"
-                value={websiteData.aboutUs.aboutDescription}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    aboutUs: {
-                      ...websiteData.aboutUs,
-                      aboutDescription: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-            </div>
+                <textarea
+                  placeholder="About Description"
+                  value={websiteData.aboutUs.aboutDescription}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      aboutUs: {
+                        ...websiteData.aboutUs,
+                        aboutDescription: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
+              </div>
+            )}
 
             {/* Contact Us */}
-            <div className="mt-8 rounded-lg space-y-2">
-              <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
+            {websiteData.sections.contactUs && (
+              <div className="mt-8 rounded-lg space-y-2">
+                <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
 
-              <input
-                type="email"
-                placeholder="Email Address"
-                value={websiteData.contactUs.email}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    contactUs: {
-                      ...websiteData.contactUs,
-                      email: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={websiteData.contactUs.email}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      contactUs: {
+                        ...websiteData.contactUs,
+                        email: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
 
-              <input
-                type="text"
-                placeholder="Phone Number"
-                value={websiteData.contactUs.phoneNo}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    contactUs: {
-                      ...websiteData.contactUs,
-                      phoneNo: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  value={websiteData.contactUs.phoneNo}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      contactUs: {
+                        ...websiteData.contactUs,
+                        phoneNo: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
 
-              <textarea
-                placeholder="Address"
-                rows={3}
-                value={websiteData.contactUs.address}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    contactUs: {
-                      ...websiteData.contactUs,
-                      address: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-            </div>
+                <textarea
+                  placeholder="Address"
+                  rows={3}
+                  value={websiteData.contactUs.address}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      contactUs: {
+                        ...websiteData.contactUs,
+                        address: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
+              </div>
+            )}
 
             {/* FAQ Section */}
-            <div className="mt-8 rounded-lg space-y-2">
-              <h3 className="text-lg font-semibold mb-4">FAQ</h3>
+            {websiteData.sections.faq && (
+              <div className="mt-8 rounded-lg space-y-2">
+                <h3 className="text-lg font-semibold mb-4">FAQ</h3>
 
-              {websiteData.FAQ.map((faq, index) => (
-                <div
-                  key={index}
-                  className="border border-[#444] rounded-lg p-3 space-y-2"
-                >
-                  <input
-                    type="text"
-                    placeholder="Question"
-                    value={faq.question}
-                    onChange={(e) => {
-                      const updated = [...websiteData.FAQ];
-                      updated[index].question = e.target.value;
-                      setWebsiteData({ ...websiteData, FAQ: updated });
-                    }}
-                    className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-                  />
-
-                  <textarea
-                    placeholder="Answer"
-                    rows={2}
-                    value={faq.answer}
-                    onChange={(e) => {
-                      const updated = [...websiteData.FAQ];
-                      updated[index].answer = e.target.value;
-                      setWebsiteData({ ...websiteData, FAQ: updated });
-                    }}
-                    className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-                  />
-
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      const updated = websiteData.FAQ.filter(
-                        (_, i) => i !== index,
-                      );
-                      setWebsiteData({ ...websiteData, FAQ: updated });
-                    }}
+                {websiteData.FAQ.map((faq, index) => (
+                  <div
+                    key={index}
+                    className="border border-[#444] rounded-lg p-3 space-y-2"
                   >
-                    Remove
-                  </Button>
-                </div>
-              ))}
+                    <input
+                      type="text"
+                      placeholder="Question"
+                      value={faq.question}
+                      onChange={(e) => {
+                        const updated = [...websiteData.FAQ];
+                        updated[index].question = e.target.value;
+                        setWebsiteData({ ...websiteData, FAQ: updated });
+                      }}
+                      className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    />
 
-              <Button
-                onClick={() =>
-                  setWebsiteData({
-                    ...websiteData,
-                    FAQ: [...websiteData.FAQ, { question: "", answer: "" }],
-                  })
-                }
-              >
-                Add FAQ
-              </Button>
-            </div>
+                    <textarea
+                      placeholder="Answer"
+                      rows={2}
+                      value={faq.answer}
+                      onChange={(e) => {
+                        const updated = [...websiteData.FAQ];
+                        updated[index].answer = e.target.value;
+                        setWebsiteData({ ...websiteData, FAQ: updated });
+                      }}
+                      className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                    />
+
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        const updated = websiteData.FAQ.filter(
+                          (_, i) => i !== index,
+                        );
+                        setWebsiteData({ ...websiteData, FAQ: updated });
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+
+                <Button
+                  onClick={() =>
+                    setWebsiteData({
+                      ...websiteData,
+                      FAQ: [...websiteData.FAQ, { question: "", answer: "" }],
+                    })
+                  }
+                >
+                  Add FAQ
+                </Button>
+              </div>
+            )}
 
             {/* Footer Section */}
-            <div className="mt-8 rounded-lg space-y-2">
-              <h3 className="text-lg font-semibold mb-4">Footer</h3>
+            {websiteData.sections.footer && (
+              <div className="mt-8 rounded-lg space-y-2">
+                <h3 className="text-lg font-semibold mb-4">Footer</h3>
 
-              <input
-                type="text"
-                placeholder="Brand Name"
-                value={websiteData.footer.brandName}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    footer: {
-                      ...websiteData.footer,
-                      brandName: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
+                <input
+                  type="text"
+                  placeholder="Brand Name"
+                  value={websiteData.footer.brandName}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      footer: {
+                        ...websiteData.footer,
+                        brandName: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
 
-              <input
-                type="text"
-                placeholder="Brand Logo URL"
-                value={websiteData.footer.branLogo}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    footer: {
-                      ...websiteData.footer,
-                      branLogo: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
+                <input
+                  type="text"
+                  placeholder="Brand Logo URL"
+                  value={websiteData.footer.brandLogo}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      footer: {
+                        ...websiteData.footer,
+                        brandLogo: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
 
-              <input
-                type="text"
-                placeholder="Social Links (comma separated)"
-                value={websiteData.footer.SocialLinks}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    footer: {
-                      ...websiteData.footer,
-                      SocialLinks: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
+                <input
+                  type="text"
+                  placeholder="Social Links (comma separated)"
+                  value={websiteData.footer.SocialLinks}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      footer: {
+                        ...websiteData.footer,
+                        SocialLinks: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
 
-              <input
-                type="text"
-                placeholder="Copyright text"
-                value={websiteData.footer.copywrite}
-                onChange={(e) =>
-                  setWebsiteData({
-                    ...websiteData,
-                    footer: {
-                      ...websiteData.footer,
-                      copywrite: e.target.value,
-                    },
-                  })
-                }
-                className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
-              />
-            </div>
+                <input
+                  type="text"
+                  placeholder="Copyright text"
+                  value={websiteData.footer.copywrite}
+                  onChange={(e) =>
+                    setWebsiteData({
+                      ...websiteData,
+                      footer: {
+                        ...websiteData.footer,
+                        copywrite: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full p-3 border border-[#505050] rounded-lg focus:border-blue-500 focus:outline-none text-white"
+                />
+              </div>
+            )}
           </div>
         </div>
 

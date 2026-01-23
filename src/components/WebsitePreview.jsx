@@ -1,7 +1,7 @@
 "use client";
 
 export default function WebsitePreview({ websiteData }) {
-  const { headerSection, heroSection } = websiteData || {};
+  const { headerSection, heroSection, sections } = websiteData || {};
   return (
     <div className="bg-white text-gray-900 min-h-screen">
       {/* Navigation */}
@@ -32,7 +32,8 @@ export default function WebsitePreview({ websiteData }) {
       </nav>
 
       {/* Hero Section */}
-      <section className="grid md:grid-cols-2 gap-12 items-center p-6 max-w-6xl mx-auto">
+      {sections?.hero && (
+        <section className="grid md:grid-cols-2 gap-12 items-center p-6 max-w-6xl mx-auto">
         <div>
           <div className="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium mb-4">
             ✨ Now trending
@@ -87,9 +88,10 @@ export default function WebsitePreview({ websiteData }) {
           </div>
         </div>
       </section>
-
+      )}
+      
       {/* Features Section */}
-      {websiteData.features?.length > 0 && (
+      {sections?.features && websiteData.features?.length > 0 && (
         <section className="p-6 max-w-6xl mx-auto mt-10">
           <h2 className="text-3xl font-bold text-center mb-10">Features</h2>
 
@@ -112,7 +114,7 @@ export default function WebsitePreview({ websiteData }) {
       )}
 
       {/* About Us */}
-      {websiteData.aboutUs && (
+      {sections?.aboutUs && websiteData.aboutUs && (
         <section className="p-6 max-w-6xl mx-auto mt-10">
           <h2 className="text-3xl font-bold text-center mb-2">About Us</h2>
           <div className="bg-gray-100 text-black rounded-xl py-10 text-center">
@@ -129,7 +131,7 @@ export default function WebsitePreview({ websiteData }) {
       )}
 
       {/* Contact Us */}
-      {websiteData.contactUs && (
+      {sections?.contactUs && websiteData.contactUs && (
         <section className="p-6 max-w-6xl mx-auto mt-10">
           <h2 className="text-3xl font-bold text-center mb-8">Contact Us</h2>
 
@@ -159,7 +161,7 @@ export default function WebsitePreview({ websiteData }) {
       )}
 
       {/* FAQ Section */}
-      {websiteData.FAQ?.length > 0 && (
+      {sections?.faq && websiteData.FAQ?.length > 0 && (
         <section className="p-6 max-w-4xl mx-auto mt-10">
           <h2 className="text-3xl font-bold text-center mb-8">
             Frequently Asked Questions
@@ -184,15 +186,16 @@ export default function WebsitePreview({ websiteData }) {
       )}
 
       {/* Footer */}
-      <footer className="bg-blue-600 text-white mt-10">
+      {sections?.footer && (
+        <footer className="bg-blue-600 text-white mt-10">
         <div className="max-w-6xl mx-auto p-8 text-center">
           <h3 className="text-2xl font-bold mb-4">
             {websiteData.footer?.brandName || "Your Brand"}
           </h3>
 
-          {websiteData.footer?.branLogo && (
+          {websiteData.footer?.brandLogo && (
             <img
-              src={websiteData.footer.branLogo}
+              src={websiteData.footer.brandLogo}
               alt="Brand Logo"
               className="mx-auto h-12 mb-4"
             />
@@ -209,6 +212,8 @@ export default function WebsitePreview({ websiteData }) {
           </p>
         </div>
       </footer>
+      )}
+      
     </div>
   );
 }
